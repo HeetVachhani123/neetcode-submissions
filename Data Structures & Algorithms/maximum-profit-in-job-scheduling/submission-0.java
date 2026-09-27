@@ -1,0 +1,36 @@
+public class Solution {
+    private int[][] intervals;
+    private int[] cache;
+
+    public int jobScheduling(int[] startTime, int[] endTime, int[] profit) {
+        int n = startTime.length;
+        intervals = new int[n][3];
+        cache = new int[n];
+        Arrays.fill(cache, -1);
+
+        for (int i = 0; i < n; i++) {
+            intervals[i] = new int[]{startTime[i], endTime[i], profit[i]};
+        }
+        Arrays.sort(intervals, Comparator.comparingInt(a -> a[0]));
+
+        return dfs(0);
+    }
+
+    private int dfs(int i) {
+        if (i == intervals.length) {
+            return 0;
+        }
+        if (cache[i] != -1) {
+            return cache[i];
+        }
+
+        int res = dfs(i + 1);
+
+        int j = i + 1;
+        while (j < intervals.length && intervals[i][1] > intervals[j][0]) {
+            j++;
+        }
+
+        return cache[i] = Math.max(res, intervals[i][2] + dfs(j));
+    }
+}
